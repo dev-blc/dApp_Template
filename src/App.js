@@ -6,23 +6,14 @@ import polygonLogo from "./assets/polygonlogo.png";
 import ethLogo from "./assets/ethlogo.png";
 import {networks} from "./utils/networks";
 
-const p2pBankContractAddress = '0x56EE7053b5184eB29bAe5229C80e57b870822C00';
+const contractAddress = 'PASTE_YOUR_DEPLOYED_AMRT_CONTRACT_ADDRESS_HERE';
 
 const App = () => {
 	//React Hooks to set values for parameters
-	const [loanAmount, setLoanAmount] = useState('');
-	const [lapseDate, setLapseDate] = useState('');
-	const [interest, setInterest] = useState('');
-	const [guarantorInterest, setGuarantorInterest] = useState('');
-	const [guarantorAddress, setGuarantorAddress] = useState('');
-	const [approve, setApprove] = useState(false);
-	const [borrower, setBorrower] = useState('');
-	const [payBackValue,setPayBackValue] = useState('');
-	const [borrowerAddress, setBorrowerAddress] = useState('');
- 	const [currentAccount, setCurrentAccount] = useState('');
+	//ADD REACT HOOKS FOR YOUR PARAMETER VALUES THAT YOU NEED TO PASS TO YOUR SOLIDITY CONTRACT FUNCTION CALL
 	const [network, setNetwork] = useState('');
-	const [loanRequests, setLoanRequests] = useState([]);
-	
+	const [currentAccount, setCurrentAccount] = useState('');
+	const [loanAmount, setLoanAmount] = useState('');
 	//Pre Requisites - Wallet connection and check 
 	const connectWallet = async() => {
 		try{
@@ -75,25 +66,23 @@ const App = () => {
     	</div>
 	);
 
-	// Utility function to Parse loanRequest Mapping to Readable format
-	const parseRequest = (request, param) => {
-		console.log(request[param]);
-		return String(request[param]);
-	}
 	
 	// Smart Contract Functions 
-	const requestLoan = async () => {
+	// ADD YOUR RESPECTIVE SMART CONTRACT FUNCTIONS AS SEPERATE FUNCTIONS 
+	// BELOW FUNCTIONS ARE FOR REFRENCE AND PLACE HOLDERS 
+	// FORMAT FOR SENDING ETHERS ALONG THE TXN IS ALSO ADDED IN BELOW CODE 
+	const functionName = async () => {
 		try {
 			const {ethereum} = window;
 			if(ethereum) {
 				const provider = new ethers.providers.Web3Provider(ethereum);
 				const signer = provider.getSigner();
-				const contract = new ethers.Contract(p2pBankContractAddress, contractAbi.abi, signer);
-				let tx = await contract.requestLoan(loanAmount*1000, lapseDate, interest*1000);
+				const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
+				let tx = await contract.functionName('ADD_FUNCTION_PARAMETRS');
 				const receipt = await tx.wait();
 				
 				if(receipt.status === 1){
-					console.log("Loan Request registered https://mumbai.polygonscan.com/tx/"+tx.hash);	
+					console.log("PRINT TXN DETAILS https://mumbai.polygonscan.com/tx/"+tx.hash);	
 				}
 				else{
 					alert("Transaction failed!!!!");
@@ -104,105 +93,17 @@ const App = () => {
 		}
 	}
 
-	const guarenteeLoan = async () => {
+	const functionWithEthers = async () => {
 		try {
 		  const { ethereum } = window;
 		  if (ethereum) {
 			const provider = new ethers.providers.Web3Provider(ethereum);
 			const signer = provider.getSigner();
-			const contract = new ethers.Contract(p2pBankContractAddress, contractAbi.abi, signer);
-			let tx = await contract.guarenteeLoan(guarantorInterest*1000,borrower,{value: ethers.utils.parseEther(loanAmount)});
+			const contract = new ethers.Contract(contractAddress, contractAbi.abi, signer);
+			let tx = await contract.functionWithEthers('ADD_YOUR_FUNCTION_PARAMETRS_HERE',{value: ethers.utils.parseEther("ADD_AMOUNT_TO_BE_SENT_HERE")});
 			const receipt = await tx.wait();
 			if(receipt.status === 1){
-				console.log("Loan request Guarenteed! https://mumbai.polygonscan.com/tx/"+tx.hash);
-			}
-			else{
-				alert("Transaction failed!!!!");
-			}
-		  }
-		} catch(error){
-		  console.log(error);
-		}
-	}
-
-	const approveGuarentee = async () => {
-		try {
-		  const { ethereum } = window;
-		  if (ethereum) {
-			const provider = new ethers.providers.Web3Provider(ethereum);
-			const signer = provider.getSigner();
-			const contract = new ethers.Contract(p2pBankContractAddress, contractAbi.abi, signer);
-			
-			let tx = await contract.approveGuarentee(guarantorAddress, approve);
-			const receipt = await tx.wait();
-			if(receipt.status === 1){
-				console.log("Guaretee status updated! https://mumbai.polygonscan.com/tx/"+tx.hash);
-			}
-			else{
-				alert("Transaction failed!!!!");
-			}
-		  }
-		} catch(error){
-		  console.log(error);
-		}
-	}
-
-	const lendLoan = async () => {
-		try {
-		  const { ethereum } = window;
-		  if (ethereum) {
-			const provider = new ethers.providers.Web3Provider(ethereum);
-			const signer = provider.getSigner();
-			const contract = new ethers.Contract(p2pBankContractAddress, contractAbi.abi, signer);
-			
-			let tx = await contract.lendLoan(borrowerAddress,{value: ethers.utils.parseEther(loanAmount)});
-			const receipt = await tx.wait();
-			if(receipt.status === 1){
-				console.log("Loan lended ! https://mumbai.polygonscan.com/tx/"+tx.hash);
-			}
-			else{
-				alert("Transaction failed!!!!");
-			}
-		  }
-		} catch(error){
-		  console.log(error);
-		}
-	}
-
-	const payBackLoan = async () => {
-		try {
-		  const { ethereum } = window;
-		  if (ethereum) {
-			const provider = new ethers.providers.Web3Provider(ethereum);
-			const signer = provider.getSigner();
-			const contract = new ethers.Contract(p2pBankContractAddress, contractAbi.abi, signer);
-			
-			let tx = await contract.payBackLoan({value: ethers.utils.parseEther(payBackValue)});
-			const receipt = await tx.wait();
-			if(receipt.status === 1){
-				console.log("Loan Payment Suscessfull ! https://mumbai.polygonscan.com/tx/"+tx.hash);
-			}
-			else{
-				alert("Transaction failed!!!!");
-			}
-		  }
-		} catch(error){
-		  console.log(error);
-		}
-	}
-
-	const claimGuarantee = async () => {
-		try {
-		  const { ethereum } = window;
-		  if (ethereum) {
-			const provider = new ethers.providers.Web3Provider(ethereum);
-			const signer = provider.getSigner();
-			const contract = new ethers.Contract(p2pBankContractAddress, contractAbi.abi, signer);
-			
-			let tx = await contract.claimGuarantee(borrowerAddress);
-			const receipt = await tx.wait();
-			if(receipt.status === 1){
-				console.log("Guarentee claimed ! https://mumbai.polygonscan.com/tx/"+tx.hash);
+				console.log("PRINT TXN DETAILS https://mumbai.polygonscan.com/tx/"+tx.hash);
 			}
 			else{
 				alert("Transaction failed!!!!");
@@ -213,25 +114,12 @@ const App = () => {
 		}
 	}
 	
-	//Fetch loan requests from chain
-	const fetchLoanRequests = async () => {
-		try {
-		  const { ethereum } = window;
-		  if (ethereum) {
-			// You know all this
-			const provider = new ethers.providers.Web3Provider(ethereum);
-			const signer = provider.getSigner();
-			const contract = new ethers.Contract(p2pBankContractAddress, contractAbi.abi, signer);
+	// ADD FUNCTIONS AS PER YOUR SMART CONTRACT USING THE ABOVE FORMAT
 	
-			const reqs = await contract.viewAllLoanRequests();
-			setLoanRequests(reqs);			
-		  }
-		} catch(error){
-		  console.log(error);
-		}
-	}
 
 	//Input form for params
+	// THIS FUNCTION IS USED TO CREATE A FORM OF INPUT PARAMS THAT NEED TO BE PASSED TO THE SMART CONTRACT 
+	// THE USER SHOULD ENTER THE VALUES THAT NEEDS TO BE PASSED TO THE SMART CONTRACT
 	const renderInputForm = () => {
 		if (network !== 'Polygon Mumbai Testnet') {
 			return (
@@ -250,7 +138,8 @@ const App = () => {
 						placeholder='Enter Loan Amount (Will be calculated as finney) '
 						onChange={e => setLoanAmount(e.target.value)}
 					/>
-					<input
+					{/* USER CAN ADD THE SAME FORMAT OF INPUT FOR ALL OTHER VARIABLES */}
+					{/* <input
 						type="text"
 						value={interest}
 						placeholder='Enter Interest'
@@ -261,156 +150,25 @@ const App = () => {
 						value={lapseDate}
 						placeholder='Enter loan repayment date in no of days format'
 						onChange={e => setLapseDate(e.target.value)}
-					/>
+					/> */}
 					
 				</div>
 				<div>
-					<button className='cta-button mint-button'  onClick={requestLoan}>
-					requestLoan
+					<button className='cta-button mint-button'  onClick={functionWithEthers}>
+					functionWithEthers
 					</button>  
 				</div>
 				
-				<div>
+				{/* <div>
 					<button className='cta-button mint-button' onClick={fetchLoanRequests}>
 					viewLoanRequests
 					</button>  
-				</div>
-				<div>
-				<h2>Loan Requests</h2>
-					<table className="card">
-					<thead>
-						<tr>
-						<th>Address</th>
-						<th>Loan Amount (finney)</th>
-						<th>Interest</th>
-						<th>Is Guarenteed</th>
-						<th>Lendor Interest</th>
-						</tr>
-					</thead>
-					<tbody>
-						{loanRequests.map((req) => {
-						return(
-							<tr key={parseRequest(req, 5)}>
-							<td>{parseRequest(req, 5)}</td>
-							<td>{parseRequest(req, 0)}</td>
-							<td>{parseRequest(req, 3)}</td>
-							<td>{parseRequest(req, 8)}</td>
-							<td>{parseRequest(req, 7)}</td>
-							</tr>
-						);
-						})}
-					</tbody>
-					</table>
+				</div> */}
+			
+		{/* USER CAN ADD THE SAME FORMAT OF INPUT FOR ALL OTHER FUNCTIONS */}
 				</div>
 
-				<div className="form-container">
-				<div className="first-row">
-					<input
-						type="text"
-						value={guarantorInterest}
-						placeholder='Enter Guarantor Interest Cut off'
-						onChange={e => setGuarantorInterest(e.target.value)}
-					/>
-					<input
-						type="text"
-						value={borrower}
-						placeholder='Enter borrowerAddress'
-						onChange={e => setBorrower(e.target.value)}
-					/>
-					
-					
-				</div>
-				<div>
-					<button className='cta-button mint-button'  onClick={guarenteeLoan}>
-					guarenteeLoan
-					</button>  
-				</div>
-
-				<div className="form-container">
-				<div className="first-row">
-					<input
-						type="text"
-						value={guarantorAddress}
-						placeholder='Enter Guarantor Address of guarentee'
-						onChange={e => setGuarantorAddress(e.target.value)}
-					/>
-					<input
-						type="text"
-						value={approve}
-						placeholder='Enter approval true or false'
-						onChange={e => setApprove(e.target.value)}
-					/>
-					
-					
-				</div>
-				<div>
-					<button className='cta-button mint-button'  onClick={approveGuarentee}>
-					approveGuarentee
-					</button>  
-				</div>
-					
-				<div className="form-container">
-				<div className="first-row">
-					<input
-						type="text"
-						value={borrowerAddress}
-						placeholder='Enter borrower address'
-						onChange={e => setBorrowerAddress(e.target.value)}
-					/>
-					
-					
-					
-				</div>
-				<div>
-					<button className='cta-button mint-button'  onClick={lendLoan}>
-					lendLoan
-					</button>  
-				</div>
-				</div>
-				<div className="form-container">
-				<div className="first-row">
-					<input
-						type="text"
-						value={payBackValue}
-						placeholder='Enter Pay Back amount '
-						onChange={e => setPayBackValue(e.target.value)}
-					/>
-					
-					
-					
-				</div>
-				<div>
-					<button className='cta-button mint-button'  onClick={payBackLoan}>
-					payBackLoan
-					</button>  
-				</div>
-				</div>
-
-				<div className="form-container">
-				<div className="first-row">
-					<input
-						type="text"
-						value={borrowerAddress}
-						placeholder='Enter borrower address'
-						onChange={e => setBorrowerAddress(e.target.value)}
-					/>
-					
-					
-					
-				</div>
-				<div>
-					<button className='cta-button mint-button'  onClick={claimGuarantee}>
-					claimGuarantee
-					</button>  
-				</div>
-				</div>
 				
-
-			</div>
-				
-
-			</div>
-			</div>
 
 		);
 	}
@@ -460,7 +218,7 @@ const App = () => {
 	useEffect(()=>{
 		checkWalletConnected();
 	},[]);
-
+	// HERE YOU MENTION TEH DESCTRIPTION AND THE TITLE OF THE PAGE THAT APPEARS BEFORE THE FORM
 	return(
 		<div className="App">
 				<div className="container">
@@ -468,10 +226,8 @@ const App = () => {
 					<div className="header-container">
 						<header>
 							<div className="left">
-								<p className="title">P2P Bank</p>
-								<p className="subtitle">DLT5401 Assignmnet</p>
-								<p className="subtitle">A peer to peer lending and borrowing service facilitated by smart contract on a blockchain </p>
-							</div>
+								<p className="title">dApp_Template</p>
+								</div>
 							<div className="right">
       							<img alt="Network logo" className="logo" src={ network.includes("Polygon") ? polygonLogo : ethLogo} />
       							{ currentAccount ? <p> Wallet: {currentAccount.slice(0, 6)}...{currentAccount.slice(-4)} </p> : <p> Not connected </p> }
